@@ -49,6 +49,12 @@ ShaderSetFloat :: (self: *Shader, name: string, value: float32)
 	glGetUniform1f(_glGetUniformLocation(self.ID, name), value);
 }
 
+ShaderSetMat4 :: (self: *Shader, name: string, value: Matrix4)
+{
+	m := value;
+	glUniformMatrix4fv(_glGetUniformLocation(self.ID, name), 1, GL_TRUE, *m.coef[0][0]);
+}
+
 
 _CompileShader :: (shaderFile: string, stage: u32) -> u32
 {
@@ -94,3 +100,4 @@ _PrintShaderError :: (error: [512] u8, length: u32)
 #import "String";
 #import "File";
 #import "GL";
+#import "Math";
