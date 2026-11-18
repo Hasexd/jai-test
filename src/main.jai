@@ -54,44 +54,50 @@ main :: () {
 	app.LastY = cast(float32) lastY;
 
 	// to delete later
-	vertices : [..]Vertex;
-	array_add(*vertices, Vertex.{ Vector3.{ -0.5, -0.5, -0.5 } });
-	array_add(*vertices, Vertex.{ Vector3.{  0.5, -0.5, -0.5 } });
-	array_add(*vertices, Vertex.{ Vector3.{  0.5,  0.5, -0.5 } });
-	array_add(*vertices, Vertex.{ Vector3.{ -0.5,  0.5, -0.5 } });
-	array_add(*vertices, Vertex.{ Vector3.{ -0.5, -0.5,  0.5 } });
-	array_add(*vertices, Vertex.{ Vector3.{  0.5, -0.5,  0.5 } });
-	array_add(*vertices, Vertex.{ Vector3.{  0.5,  0.5,  0.5 } });
-	array_add(*vertices, Vertex.{ Vector3.{ -0.5,  0.5,  0.5 } });
+	vertices: [..]Vertex;
 
-	cubeIndices := u32.[
-		4, 5, 6,  4, 6, 7,
-		1, 0, 3,  1, 3, 2,
-		0, 4, 7,  0, 7, 3,
-		5, 1, 2,  5, 2, 6,
-		7, 6, 2,  7, 2, 3,
-		0, 1, 5,  0, 5, 4
-	];
+	array_add(*vertices, Vertex.{ Vector3.{ -0.5, -0.5, -0.5 }, Vector3.{ 0, 0, -1 }, Vector2.{ 1, 0 } });
+	array_add(*vertices, Vertex.{ Vector3.{ -0.5,  0.5, -0.5 }, Vector3.{ 0, 0, -1 }, Vector2.{ 1, 1 } });
+	array_add(*vertices, Vertex.{ Vector3.{  0.5,  0.5, -0.5 }, Vector3.{ 0, 0, -1 }, Vector2.{ 0, 1 } });
+	array_add(*vertices, Vertex.{ Vector3.{  0.5, -0.5, -0.5 }, Vector3.{ 0, 0, -1 }, Vector2.{ 0, 0 } });
 
+	array_add(*vertices, Vertex.{ Vector3.{ -0.5, -0.5,  0.5 }, Vector3.{ 0, 0, 1 }, Vector2.{ 0, 0 } });
+	array_add(*vertices, Vertex.{ Vector3.{  0.5, -0.5,  0.5 }, Vector3.{ 0, 0, 1 }, Vector2.{ 1, 0 } });
+	array_add(*vertices, Vertex.{ Vector3.{  0.5,  0.5,  0.5 }, Vector3.{ 0, 0, 1 }, Vector2.{ 1, 1 } });
+	array_add(*vertices, Vertex.{ Vector3.{ -0.5,  0.5,  0.5 }, Vector3.{ 0, 0, 1 }, Vector2.{ 0, 1 } });
+
+	array_add(*vertices, Vertex.{ Vector3.{ -0.5, -0.5, -0.5 }, Vector3.{ -1, 0, 0 }, Vector2.{ 0, 0 } });
+	array_add(*vertices, Vertex.{ Vector3.{ -0.5, -0.5,  0.5 }, Vector3.{ -1, 0, 0 }, Vector2.{ 1, 0 } });
+	array_add(*vertices, Vertex.{ Vector3.{ -0.5,  0.5,  0.5 }, Vector3.{ -1, 0, 0 }, Vector2.{ 1, 1 } });
+	array_add(*vertices, Vertex.{ Vector3.{ -0.5,  0.5, -0.5 }, Vector3.{ -1, 0, 0 }, Vector2.{ 0, 1 } });
+
+	array_add(*vertices, Vertex.{ Vector3.{  0.5, -0.5, -0.5 }, Vector3.{ 1, 0, 0 }, Vector2.{ 1, 0 } });
+	array_add(*vertices, Vertex.{ Vector3.{  0.5,  0.5, -0.5 }, Vector3.{ 1, 0, 0 }, Vector2.{ 1, 1 } });
+	array_add(*vertices, Vertex.{ Vector3.{  0.5,  0.5,  0.5 }, Vector3.{ 1, 0, 0 }, Vector2.{ 0, 1 } });
+	array_add(*vertices, Vertex.{ Vector3.{  0.5, -0.5,  0.5 }, Vector3.{ 1, 0, 0 }, Vector2.{ 0, 0 } });
+
+	array_add(*vertices, Vertex.{ Vector3.{ -0.5, -0.5, -0.5 }, Vector3.{ 0, -1, 0 }, Vector2.{ 0, 0 } });
+	array_add(*vertices, Vertex.{ Vector3.{  0.5, -0.5, -0.5 }, Vector3.{ 0, -1, 0 }, Vector2.{ 1, 0 } });
+	array_add(*vertices, Vertex.{ Vector3.{  0.5, -0.5,  0.5 }, Vector3.{ 0, -1, 0 }, Vector2.{ 1, 1 } });
+	array_add(*vertices, Vertex.{ Vector3.{ -0.5, -0.5,  0.5 }, Vector3.{ 0, -1, 0 }, Vector2.{ 0, 1 } });
+
+	array_add(*vertices, Vertex.{ Vector3.{ -0.5,  0.5,  0.5 }, Vector3.{ 0, 1, 0 }, Vector2.{ 0, 0 } });
+	array_add(*vertices, Vertex.{ Vector3.{  0.5,  0.5,  0.5 }, Vector3.{ 0, 1, 0 }, Vector2.{ 1, 0 } });
+	array_add(*vertices, Vertex.{ Vector3.{  0.5,  0.5, -0.5 }, Vector3.{ 0, 1, 0 }, Vector2.{ 1, 1 } });
+	array_add(*vertices, Vertex.{ Vector3.{ -0.5,  0.5, -0.5 }, Vector3.{ 0, 1, 0 }, Vector2.{ 0, 1 } });
+	
 	indices: [..]u32;
-	for cubeIndices  array_add(*indices, it);
+	for face: 0..5 
+	{
+    	b := cast(u32) (face * 4);
+    	array_add(*indices, b + 0); array_add(*indices, b + 1); array_add(*indices, b + 2);
+    	array_add(*indices, b + 0); array_add(*indices, b + 2); array_add(*indices, b + 3);
+	}
+	
+	textures: [..] Texture;
 
-	vao: u32 = 0;
-	glGenVertexArrays(1, *vao);
-	glBindVertexArray(vao);
-
-	vbo: u32 = 0;
-	glGenBuffers(1, *vbo);
-
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, vertices.count * size_of(Vertex), vertices.data, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, size_of(Vertex), xx 0);
-	glEnableVertexAttribArray(0);
-
-	ebo: u32 = 0;
-	glGenBuffers(1, *ebo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.count * size_of(u32), indices.data, GL_STATIC_DRAW);
+	cubeMesh: Mesh;
+	MeshInit(*cubeMesh, *vertices, *indices, *textures);
 
 	now := glfwGetTime();
 	last := glfwGetTime();
@@ -118,9 +124,7 @@ main :: () {
 		// render (to delete later)
 		ShaderUse(*shader);
 		ShaderSetMat4(*shader, "model", model);
-		glBindVertexArray(vao);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-		glDrawElements(GL_TRIANGLES, cast(u32) indices.count, GL_UNSIGNED_INT, xx 0);
+		MeshDraw(*cubeMesh, *shader);
 
 		glfwSwapBuffers(app.Window);
 	}
@@ -235,19 +239,16 @@ App :: struct
 	CursorDisabled: bool;
 }
 
-Vertex :: struct
-{
-	Position: Vector3;
-}
-
 VP :: struct
 {
 	View: Matrix4;
 	Projection: Matrix4;
 }
 
+#import, file "Mesh.jai";
 #import, file "Shader.jai";
 #import, file "Camera.jai";
+#import, file "Assimp.jai";
 
 #import, file "../libs/glfw/module.jai";
 

@@ -36,17 +36,17 @@ ShaderUse :: (self: *Shader)
 
 ShaderSetBool :: (self: *Shader, name: string, value: bool)
 {
-	glGetUniform1i(_glGetUniformLocation(self.ID, name), cast(u32) value);
+	glUniform1i(_glGetUniformLocation(self.ID, name), cast(u32) value);
 }
 
 ShaderSetInt :: (self: *Shader, name: string, value: u32)
 {
-	glGetUniform1i(_glGetUniformLocation(self.ID, name), value);
+	glUniform1i(_glGetUniformLocation(self.ID, name), xx value);
 }
 
 ShaderSetFloat :: (self: *Shader, name: string, value: float32)
 {
-	glGetUniform1f(_glGetUniformLocation(self.ID, name), value);
+	glUniform1f(_glGetUniformLocation(self.ID, name), value);
 }
 
 ShaderSetMat4 :: (self: *Shader, name: string, value: Matrix4)
