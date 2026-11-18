@@ -45,7 +45,7 @@ main :: () {
 	glGenBuffers(1, *vbo);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, vertices.count * VERTEX_SIZE, *vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vertices.count * VERTEX_SIZE, vertices.data, GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, VERTEX_SIZE, xx 0);
 	glEnableVertexAttribArray(0);
 
