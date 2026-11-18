@@ -31,10 +31,30 @@ main :: () {
 	shader: Shader;
 	ShaderInit(*shader, "object.vert", "object.frag");
 
+	// to delete later
+	vertices : [..]Vertex;
+	array_add(*vertices, Vertex.{ Vector3.{ -0.5, -0.5, 0.0 } });
+	array_add(*vertices, Vertex.{ Vector3.{ 0.5, -0.5, 0.0 } });
+	array_add(*vertices, Vertex.{ Vector3.{ 0.0, 0.5, 0.0 } });
+
+	vao: u32 = 0;
+	glGenVertexArrays(1, *vao);
+	glBindVertexArray(vao);
+
+	vbo: u32 = 0;
+	glGenBuffers(1, *vbo);
+
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, vertices.count * VERTEX_SIZE, *vertices, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, VERTEX_SIZE, xx 0);
+	glEnableVertexAttribArray(0);
+
 	now := glfwGetTime();
 	last := glfwGetTime();
 	deltaTime: float32 = 0.0;
-
+	
+	
+	glClearColor(0.0, 0.0, 0.0, 1.0);
 	while !glfwWindowShouldClose(app.Window) 
 	{
 		now = glfwGetTime();
@@ -44,7 +64,11 @@ main :: () {
 		glfwPollEvents();
 
 		glClear(GL_COLOR_BUFFER_BIT);
-		glClearColor(0.0, 0.0, 0.0, 1.0);
+
+		// render (to delete later)
+		ShaderUse(*shader);
+		glBindVertexArray(vao);
+		glDrawArrays(GL_TRIANGLES, 0 , 3);
 
 		glfwSwapBuffers(app.Window);
 	}
@@ -68,6 +92,7 @@ App :: struct
 	Window: *GLFWwindow;
 }
 
+VERTEX_SIZE :: 3 * size_of(float32);
 Vertex :: struct
 {
 	Position: Vector3;

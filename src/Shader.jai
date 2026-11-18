@@ -8,7 +8,7 @@ ShaderInit :: (self: *Shader, vertexFile: string, fragmentFile: string)
 {
 	vertex := _CompileShader(vertexFile, GL_VERTEX_SHADER);
 	fragment := _CompileShader(fragmentFile, GL_FRAGMENT_SHADER);
-
+	
 	self.ID = glCreateProgram();
 	glAttachShader(self.ID, vertex);
 	glAttachShader(self.ID, fragment);
