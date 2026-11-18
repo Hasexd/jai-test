@@ -33,9 +33,18 @@ main :: () {
 
 	// to delete later
 	vertices : [..]Vertex;
-	array_add(*vertices, Vertex.{ Vector3.{ -0.5, -0.5, 0.0 } });
+	array_add(*vertices, Vertex.{ Vector3.{ 0.5, 0.5, 0.0 } });
 	array_add(*vertices, Vertex.{ Vector3.{ 0.5, -0.5, 0.0 } });
-	array_add(*vertices, Vertex.{ Vector3.{ 0.0, 0.5, 0.0 } });
+	array_add(*vertices, Vertex.{ Vector3.{ -0.5, -0.5, 0.0 } });
+	array_add(*vertices, Vertex.{ Vector3.{ -0.5, 0.5, 0.0 } });
+
+	indices: [..]u32;
+	array_add(*indices, 0);
+	array_add(*indices, 1);
+	array_add(*indices, 3);
+	array_add(*indices, 1);
+	array_add(*indices, 2);
+	array_add(*indices, 3);
 
 	vao: u32 = 0;
 	glGenVertexArrays(1, *vao);
@@ -49,10 +58,14 @@ main :: () {
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, VERTEX_SIZE, xx 0);
 	glEnableVertexAttribArray(0);
 
+	ebo: u32 = 0;
+	glGenBuffers(1, *ebo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.count * size_of(u32), indices.data, GL_STATIC_DRAW);
+
 	now := glfwGetTime();
 	last := glfwGetTime();
 	deltaTime: float32 = 0.0;
-	
 	
 	glClearColor(0.0, 0.0, 0.0, 1.0);
 	while !glfwWindowShouldClose(app.Window) 
@@ -68,7 +81,8 @@ main :: () {
 		// render (to delete later)
 		ShaderUse(*shader);
 		glBindVertexArray(vao);
-		glDrawArrays(GL_TRIANGLES, 0 , 3);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, xx 0);
 
 		glfwSwapBuffers(app.Window);
 	}
