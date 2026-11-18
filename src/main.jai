@@ -24,10 +24,12 @@ main :: () {
 	gl_load(*gl, glfwGetProcAddress.(*void));
 
 	glfwSetWindowUserPointer(app.Window, *app);
-
 	glfwSetFramebufferSizeCallback(app.Window, FramebufferCallback);
 
 	glViewport(0, 0, app.Width, app.Height);
+
+	shader: Shader;
+	ShaderInit(*shader, "object.vert", "object.frag");
 
 	now := glfwGetTime();
 	last := glfwGetTime();
@@ -70,6 +72,8 @@ Vertex :: struct
 {
 	Position: Vector3;
 }
+
+#import, file "Shader.jai";
 
 #import, file "../libs/glfw/module.jai";
 
