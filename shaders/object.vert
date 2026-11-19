@@ -12,7 +12,18 @@ layout (std430, binding = 0) readonly buffer VPBuffer
 
 uniform mat4 model;
 
+out vec3 fragPos;
+out vec3 normal;
+out vec2 texCoord;
+
 void main()
 {
-	gl_Position = projection * view * model * vec4(inPos, 1.0);
+	vec4 worldPos = model * vec4(inPos, 1.0);
+
+	fragPos = worldPos.xyz;
+	// normal matrix - correct also for non-uniform scale (could be precomputed on the CPU)
+	normal = mat3(transpose(inverse(model))) * inNormal;
+	texCoord = inTexCoord;
+
+	gl_Position = projection * view * worldPos;
 }

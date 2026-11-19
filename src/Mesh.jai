@@ -21,45 +21,43 @@ MeshInit :: (self: *Mesh, vertices: *[..] Vertex, indices: *[..] u32, textures: 
 
 MeshDraw :: (self: *Mesh, shader: *Shader)
 {
-	diffuseNr: u8 = 1;
-	specularNr: u8 = 1;
-
-	sb: String_Builder;
-	init_string_builder(*sb);
+	hasDiffuse := false;
+	hasSpecular := false;
+	hasEmission := false;
 
 	for self.Textures
 	{
-		glActiveTexture(GL_TEXTURE0 + 1);
-
-		number: string;
-		name := it.Type;
-
-		if name == "texture_diffuse"
-		{
-			number = to_string(*diffuseNr, 1);
-			diffuseNr += 1;
-		}
-		else if name == "texture_specular"
-		{
-			number = to_string(*specularNr, 1);
-			specularNr += 1;
-		}
-		
-		reset(*sb);
-
-		append(*sb, "material.");
-		append(*sb, name);
-		append(*sb, number);
-		
-		built := builder_to_string(*sb);
-		print("Built string in 'DrawMesh': %", built);
-	
-		ShaderSetInt(shader, built, xx it_index);
+		glActiveTexture(cast(u32) (GL_TEXTURE0 + it_index));
 		glBindTexture(GL_TEXTURE_2D, it.ID);
+
+		if it.Type == "texture_diffuse"
+		{
+			ShaderSetInt(shader, "material.diffuseMap", xx it_index);
+			hasDiffuse = true;
+		}
+		else if it.Type == "texture_specular"
+		{
+			ShaderSetInt(shader, "material.specularMap", xx it_index);
+			hasSpecular = true;
+		}
+		else if it.Type == "texture_emission"
+		{
+			ShaderSetInt(shader, "material.emissionMap", xx it_index);
+			hasEmission = true;
+		}
 	}
+
+	ShaderSetBool(shader, "material.hasDiffuseMap", hasDiffuse);
+	ShaderSetBool(shader, "material.hasSpecularMap", hasSpecular);
+	ShaderSetBool(shader, "material.hasEmissionMap", hasEmission);
 
 	glActiveTexture(GL_TEXTURE0);
 
+	MeshDrawGeometry(self);
+}
+
+MeshDrawGeometry :: (self: *Mesh)
+{
 	glBindVertexArray(self._vao);
 	glDrawElements(GL_TRIANGLES, xx self.Indices.count, GL_UNSIGNED_INT, xx 0);
 	glBindVertexArray(0);
@@ -98,12 +96,7 @@ Vertex :: struct
 	TexCoords: Vector2;
 }
 
-Texture :: struct
-{
-	ID: u32;
-	Type: string;
-}
-
+#import, file "Texture.jai";
 #import, file "Shader.jai";
 
 #import "Basic";
