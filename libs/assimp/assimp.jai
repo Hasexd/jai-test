@@ -1,7 +1,7 @@
 //
 // This file was auto-generated using the following command:
 //
-// jai generate.jai
+// jai generate_assimp.jai
 //
 
 
@@ -3696,7 +3696,7 @@ aiPostProcessSteps :: enum s32 {
 
 #import "Basic"; // For assert
 
-assimp :: #library,no_dll "C:/VSProjects/jai-test//libs/assimp/assimp";
+assimp :: #library,no_dll "libs/assimp/assimp";
 
 #run {
     {
