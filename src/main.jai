@@ -34,8 +34,25 @@ main :: () {
 	glViewport(0, 0, app.Width, app.Height);
 
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_STENCIL_TEST);
 	glfwSetInputMode(app.Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
+	// imgui setup
+	imGuiContext := CreateContext();
+	
+	imGuiIO := GetIO();
+
+	imGuiStyle := GetStyle();
+	StyleColorsDark();
+	
+	imGuiStyle.FrameRounding = 3.0;
+	imGuiStyle.GrabRounding = 3.0;
+
+	ImGui_ImplGlfw_Init(app.Window, true);
+	
+	defer DestroyContext(imGuiContext);
+	defer ImGui_ImplGlfw_Shutdown();
+	
 	objectShader: Shader;
 	ShaderInit(*objectShader, "object.vert", "object.frag");
 
@@ -68,14 +85,19 @@ main :: () {
 	now := glfwGetTime();
 	last := glfwGetTime();
 	deltaTime: float32 = 0.0;
-	
+	fps: u32 = 0;
+
 	glClearColor(0.0, 0.0, 0.0, 1.0);
 	while !glfwWindowShouldClose(app.Window) 
 	{
 		now = glfwGetTime();
 		deltaTime = cast(float32) (now - last);
 		last = now;
+		fps = cast(u32) (1 / deltaTime);
 
+		//print("%\n", fps);
+		
+		// events
 		glfwPollEvents();
 
 		if glfwGetKey(app.Window, GLFW_KEY_W) == GLFW_PRESS CameraProcessKeyboard(*app.MainCamera, .FORWARD, deltaTime);
@@ -84,8 +106,18 @@ main :: () {
 		if glfwGetKey(app.Window, GLFW_KEY_D) == GLFW_PRESS CameraProcessKeyboard(*app.MainCamera, .RIGHT, deltaTime);
 		
 		_UpdateCameraBuffers(*app, *vp, vpBuffer);
-		
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		// ui
+
+		ImGui_ImplGlfw_NewFrame(app.Window);
+		NewFrame();
+
+		ShowDemoWindow();
+	
+		Render();
+
+		// render
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 		ShaderUse(*objectShader);
 		ShaderSetMat4(*objectShader, "model", Matrix4_Identity);
@@ -95,6 +127,7 @@ main :: () {
 		ShaderSetMaterial(*objectShader, *defaultMaterial);
 		ModelDraw(*model, *objectShader);
 
+		ImGui_ImplGlfw_RenderDrawLists(GetDrawData());
 		glfwSwapBuffers(app.Window);
 
 		reset_temporary_storage();
@@ -141,6 +174,11 @@ _UpdateVPBuffer :: (buffer: u32, vp: *VP)
 
 _MouseButtonCallback :: (window: *GLFWwindow, button: s32, action: s32, mods: s32) #c_call
 {
+	io := GetIO();
+
+	if io.WantCaptureMouse
+		return;
+
 	app := cast(*App) glfwGetWindowUserPointer(window);
 
 	if button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS
@@ -240,3 +278,6 @@ VP :: struct
 #import "Basic";
 #import "GL";
 #import "Math";
+
+#load "imgui_glfw_gl.jai";
+#import "ImGui";

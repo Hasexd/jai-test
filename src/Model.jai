@@ -38,6 +38,8 @@ ModelInit :: (self: *Model, fileName: string, flipUVs := false)
 
 	if flipUVs flags |= aiPostProcessSteps.FlipUVs;
 
+	secondsStart := seconds_since_init();
+
 	scene := aiImportFile(temp_c_string(path), cast(u32) flags);
 
 	if !scene || (scene.mFlags & AI_SCENE_FLAGS_INCOMPLETE) != 0 || !scene.mRootNode
@@ -53,6 +55,8 @@ ModelInit :: (self: *Model, fileName: string, flipUVs := false)
 	_FitToView(self);
 
 	aiReleaseImport(scene);
+
+	print("Loading '%' took: % seconds\n", path_filename(path), seconds_since_init() - secondsStart);
 }
 
 _ReadAxes :: (self: *Model, meta: *aiMetadata)
