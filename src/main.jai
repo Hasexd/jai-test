@@ -53,10 +53,17 @@ main :: () {
 	app.LastY = cast(float32) lastY;
 
 	// sun
-	dirLight := MakeDirLight(Vector3.{ -0.2, -1.0, -0.3 }, Vector3.{ 1.0, 1.0, 1.0 });
+	sunColor := Vector3.{ 1.0, 0.96, 0.88 };
+	dirLight := MakeDirLight(Vector3.{ -0.3, -0.5, -1.0 }, sunColor);
+	dirLight.Ambient = sunColor * 0.3;
+	dirLight.Diffuse = sunColor;
+	dirLight.Specular = sunColor;
+
+	defaultMaterial := Material.{ Vector3.{ 0.8, 0.8, 0.8 }, Vector3.{ 0.8, 0.8, 0.8 },
+		Vector3.{ 0.2, 0.2, 0.2 }, 32.0 };
 
 	model: Model;
-	ModelInit(*model, "assasin.fbx");
+	ModelInit(*model, "gangster.fbx");
 
 	now := glfwGetTime();
 	last := glfwGetTime();
@@ -87,6 +94,7 @@ main :: () {
 		ShaderSetVec3(*objectShader, "viewPos", app.MainCamera.Position);
 		ShaderSetDirLight(*objectShader, *dirLight);
 		
+		ShaderSetMaterial(*objectShader, *defaultMaterial);
 		ModelDraw(*model, *objectShader);
 
 		glfwSwapBuffers(app.Window);
