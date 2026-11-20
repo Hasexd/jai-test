@@ -10,8 +10,8 @@ main :: () {
 	app: App;
 	app.Width = 1080;
 	app.Height = 720;
+	app.WireframeMode = false;
 	app.CursorDisabled = true;
-	app.DirLightOn = true;
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
@@ -86,8 +86,6 @@ main :: () {
 		_UpdateCameraBuffers(*app, *vp, vpBuffer);
 		
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		dirLight.Enabled = app.DirLightOn;
 
 		ShaderUse(*objectShader);
 		ShaderSetMat4(*objectShader, "model", Matrix4_Identity);
@@ -168,7 +166,15 @@ _KeyCallback :: (window: *GLFWwindow, key: s32, scancode: s32, action: s32, mods
 		}
 	}
 
-	if key == GLFW_KEY_G && action == GLFW_PRESS app.DirLightOn = !app.DirLightOn;
+	if key == GLFW_KEY_F1 && action == GLFW_PRESS
+	{
+		app.WireframeMode = !app.WireframeMode;
+
+		if app.WireframeMode
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		else
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
 }
 
 _CursorPosCallback :: (window: *GLFWwindow, xOffset: float64, yOffset: float64) #c_call
@@ -211,8 +217,8 @@ App :: struct
 	MainCamera: Camera;
 	LastX: float32;
 	LastY: float32;
+	WireframeMode: bool;
 	CursorDisabled: bool;
-	DirLightOn: bool;
 }
 
 VP :: struct
